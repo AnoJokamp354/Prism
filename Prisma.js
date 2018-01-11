@@ -295,10 +295,10 @@ Prism.languages.javascript = {
 		pattern: /(^|[^/])\/(?!\/)(\[.+?]|\\.|[^/\r\n])+\/[gim]{0,3}(?=\s*($|[\r\n,.;})]))/g,
 		lookbehind: true
 	},
-	'keyword': /\b(var|let|if|else|while|do|for|return|in|instanceof|function|new|with|typeof|try|catch|finally|null|import|keluarkeun|break|continue)\b/g,
+	'keyword': /\b(var|let|if|else|while|do|for|return|in|instanceof|function|new|with|typeof|try|catch|finally|null|break|continue)\b/g,
 	'boolean': /\b(true|false)\b/g,
-	'android': /\b(android|blekberiy)\b/g,
-	'androperty': /\b(import|keluarkeun)\b/g,
+	'android': /\b(android)\b/g,
+	'androperty': /\b(import)\b/g,
 	'number': /\b-?(0x)?\d*\.?\d+\b/g,
 	'operator': /[-+]{1,2}|!|=?&lt;|=?&gt;|={1,2}|(&amp;){1,2}|\|?\||\?|\*|\//g,
 	'ignore': /&(lt|gt|amp);/gi,

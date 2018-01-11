@@ -286,7 +286,7 @@ if (Prism.languages.markup) {
 	});
 }
 Prism.languages.javascript = {
-	'commandline': /\b($|#)\b/g,
+	'commandline': /\b($ |#)\b/g,
 	'comment': {
 		pattern: /(^|[^\\])(\/\*[\w\W]*?\*\/|\/\/.*?(\r?\n|$))/g,
 		lookbehind: true

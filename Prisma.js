@@ -222,7 +222,7 @@
 		}
 	}
 })();
-Prism.languages.markup = {
+Prism.languages.html = {
 	'comment': /&lt;!--[\w\W]*?--(&gt;|&gt;)/g,
 	'prolog': /&lt;\?.+?\?&gt;/,
 	'doctype': /&lt;!DOCTYPE.+?&gt;/,
@@ -271,14 +271,14 @@ Prism.languages.css = {
 	'ignore': /&(lt|gt|amp);/gi,
 	'punctuation': /[\{\};:]/g
 };
-if (Prism.languages.markup) {
-	Prism.languages.insertBefore('markup', 'tag', {
+if (Prism.languages.html) {
+	Prism.languages.insertBefore('html', 'tag', {
 		'style': {
 			pattern: /(&lt;|<)style[\w\W]*?(>|&gt;)[\w\W]*?(&lt;|<)\/style(>|&gt;)/ig,
 			inside: {
 				'tag': {
 					pattern: /(&lt;|<)style[\w\W]*?(>|&gt;)|(&lt;|<)\/style(>|&gt;)/ig,
-					inside: Prism.languages.markup.tag.inside
+					inside: Prism.languages.html.tag.inside
 				},
 				rest: Prism.languages.css
 			}
@@ -302,14 +302,14 @@ Prism.languages.javascript = {
 	'ignore': /&(lt|gt|amp);/gi,
 	'punctuation': /[{}[\];(),.:]/g
 };
-if (Prism.languages.markup) {
-	Prism.languages.insertBefore('markup', 'tag', {
+if (Prism.languages.html) {
+	Prism.languages.insertBefore('html', 'tag', {
 		'script': {
 			pattern: /(&lt;|<)script[\w\W]*?(>|&gt;)[\w\W]*?(&lt;|<)\/script(>|&gt;)/ig,
 			inside: {
 				'tag': {
 					pattern: /(&lt;|<)script[\w\W]*?(>|&gt;)|(&lt;|<)\/script(>|&gt;)/ig,
-					inside: Prism.languages.markup.tag.inside
+					inside: Prism.languages.html.tag.inside
 				},
 				rest: Prism.languages.javascript
 			}

@@ -338,7 +338,7 @@ Prism.languages.java = {
 	/* Warna Merah Biasa */
 	'androperty': /\b(import|using)\b/g,
 	/* Warna Aqua */
-	'line': /\b(Override|Text|Animator|Rigidbody2D|GameObject|AudioSource|MonoBehaviour|Transform|LayerMask|Vector2|Vector3|Vector4|Slider|Collider2D|KeyCode|Time|Input)\b/g,
+	'line': /\b(Override|Text|Animator|Rigidbody2D|GameObject|AudioSource|MonoBehaviour|Transform|LayerMask|Vector2|Vector3|Vector4|Slider|Collider2D|KeyCode|Time|Input|Physics|Physics2D|PhysicMaterial|PhysicsMaterial2D)\b/g,
 	/* Warna Kuning */
 	'number': /\b0b[01]+\b|\b0x[\da-f]*\.?[\da-fp\-]+\b|\b\d*\.?\d+[e]?[\d]*[df]\b|\W\d*\.?\d+\b/gi,
 	/* Warna Biru */

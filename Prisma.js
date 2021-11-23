@@ -65,7 +65,7 @@
 			if (!code) {
 				return;
 			}
-			code = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\u00a0/g, ' ');
+			code = code.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/\u00a0/g, ' ');
 			//console.time(code.slice(0,50));
 			var env = {
 				element: element,
@@ -222,18 +222,27 @@
 		}
 	}
 })();
+
+// Plugin to make entity title show the real entity, idea by Roman Komarov
+Prism.hooks.add('wrap', function (env) {
+	if (env.type === 'entity') {
+		env.attributes['title'] = env.content.replace(/&/, '&');
+	}
+});
+
+
 Prism.languages.html = {
-	'comment': /&lt;!--[\w\W]*?--(&gt;|&gt;)/g,
-	'prolog': /&lt;\?.+?\?&gt;/,
-	'doctype': /&lt;!DOCTYPE.+?&gt;/,
-	'cdata': /&lt;!\[CDATA\[[\w\W]+?]]&gt;/i,
+	'comment': /<!--[\w\W]*?--(>|>)/g,
+	'prolog': /<\?.+?\?>/,
+	'doctype': /<!DOCTYPE.+?>/,
+	'cdata': /<!\[CDATA\[[\w\W]+?]]>/i,
 	'tag': {
-		pattern: /&lt;\/?[\w:-]+\s*[\w\W]*?&gt;/gi,
+		pattern: /<\/?[\w:-]+\s*[\w\W]*?>/gi,
 		inside: {
 			'tag': {
-				pattern: /^&lt;\/?[\w:-]+/i,
+				pattern: /^<\/?[\w:-]+/i,
 				inside: {
-					'punctuation': /^&lt;\/?/,
+					'punctuation': /^<\/?/,
 					'namespace': /^[\w-]+?:/
 				}
 			},
@@ -243,7 +252,7 @@ Prism.languages.html = {
 					'punctuation': /=/g
 				}
 			},
-			'punctuation': /\/?&gt;/g,
+			'punctuation': /\/?>/g,
 			'attr-name': {
 				pattern: /[\w:-]+/g,
 				inside: {
@@ -252,14 +261,9 @@ Prism.languages.html = {
 			}
 		}
 	},
-	'entity': /&amp;#?[\da-z]{1,8};/gi
+	'entity': /&#?[\da-z]{1,8};/gi
 };
-// Plugin to make entity title show the real entity, idea by Roman Komarov
-Prism.hooks.add('wrap', function (env) {
-	if (env.type === 'entity') {
-		env.attributes['title'] = env.content.replace(/&amp;/, '&');
-	}
-});
+
 Prism.languages.css = {
 	'comment': /\/\*[\w\W]*?\*\//g,
 	'atrule': /@[\w-]+?(\s+.+)?(?=\s*{|\s*;)/gi,
@@ -271,20 +275,63 @@ Prism.languages.css = {
 	'ignore': /&(lt|gt|amp);/gi,
 	'punctuation': /[\{\};:]/g
 };
-if (Prism.languages.html) {
-	Prism.languages.insertBefore('html', 'tag', {
-		'style': {
-			pattern: /(&lt;|<)style[\w\W]*?(>|&gt;)[\w\W]*?(&lt;|<)\/style(>|&gt;)/ig,
-			inside: {
-				'tag': {
-					pattern: /(&lt;|<)style[\w\W]*?(>|&gt;)|(&lt;|<)\/style(>|&gt;)/ig,
-					inside: Prism.languages.html.tag.inside
-				},
-				rest: Prism.languages.css
+
+Prism.languages.php = {
+	/* Warna Abu-Abu */
+	'comment': {
+		pattern: /(^|[^\\])(\/\*[\w\W]*?\*\/|\/\/.*?(\r?\n|$))/g,
+		lookbehind: true
+	},
+	'purple': /\b(php|PHP|null|base)\b/g,
+	/* Warna Merah Italic */
+	'keyword': /\b(trigger_error|exit|error_reporting|mysqli_error|session_start|session_destroy|public|import|virtual|abstract|continue|for|new|switch|assert|default|goto|get|set|package|synchronized|boolean|do|if|foreach|private|this|break|double|implements|protected|throw|byte|else|throws|case|enum|instanceof|return|transient|catch|extends|int|bool|short|try|char|final|interface|static|void|id|class|finally|long|strictfp|volatile|const|float|native|super|while|endwhile|Destroy|value)\b/g,
+	/* Warna Kuning */
+	'boolean': /\b(true|false)\b/g,
+	/* Warna Hijau Tua */
+	'general': /\b(array_shift|strtotime|strlen|strpos|set_magic_quotes_runtime|get_magic_quotes_gpc|version_compare)\b/g,
+	/* Warna Coklat */
+	'brown': /\b(array|file_get_contents|phpversion)\b/g,
+	/* Warna Hijau Muda */
+	'green-young': /\b(_GET|_POST|_get|_post|_SESSION|_SERVER|substr|ini_get|ini_set|stripslashes)\b/g,
+	/* Warna Aqua */
+	'aqua': /\b(HTTP_USER_AGENT|HTTP_ACCEPT|HTTP_PROFILE|HTTP_X_WAP_PROFILE|PHP_AUTH_USER|PHP_AUTH_PW|set_time_limit|location|Location|method|Method|action|Action|explode|fopen|fwrite|fclose|mysqli_connect|mysqli_query|mysqli_fetch_assoc|date)\b/g,
+	
+	'android': /\b(time|gmdate|header|isset|preg_match|android|blackberry|iphone|opera|palm|windows|generic)\b/g,
+	/* Warna Merah Biasa */
+	'red': /\b(include|file_exists|as|md5|die|empty|json_encode)\b/g,
+	
+	'prolog': /<\?.+?\?>/,
+	'doctype': /<!DOCTYPE.+?>/,
+	'cdata': /<!\[CDATA\[[\w\W]+?]]>/i,
+	'tag': {
+		pattern: /<\/?[\w:-]+\s*[\w\W]*?>/gi,
+		inside: {
+			'tag': {
+				pattern: /^<\/?[\w:-]+/i,
+				inside: {
+					'punctuation': /^<\/?/,
+					'namespace': /^[\w-]+?:/
+				}
+			},
+			'attr-value': {
+				pattern: /=(('|")[\w\W]*?(\2)|[^\s>]+)/gi,
+				inside: {
+					'punctuation': /=/g
+				}
+			},
+			'punctuation': /\/?>/g,
+			'attr-name': {
+				pattern: /[\w:-]+/g,
+				inside: {
+					'namespace': /^[\w-]+?:/
+				}
 			}
 		}
-	});
-}
+	},
+	'entity': /&#?[\da-z]{1,8};/gi,
+
+};
+
 Prism.languages.javascript = {
 	'comment': {
 		pattern: /(^|[^\\])(\/\*[\w\W]*?\*\/|\/\/.*?(\r?\n|$))/g,
@@ -298,24 +345,11 @@ Prism.languages.javascript = {
 	'keyword': /\b(var|let|if|else|while|do|for|return|in|instanceof|function|new|with|typeof|try|catch|finally|null|break|continue)\b/g,
 	'boolean': /\b(true|false)\b/g,
 	'number': /\b-?(0x)?\d*\.?\d+\b/g,
-	'operator': /[-+]{1,2}|!|=?&lt;|=?&gt;|={1,2}|(&amp;){1,2}|\|?\||\?|\*|\//g,
+	'operator': /[-+]{1,2}|!|=?<|=?>|={1,2}|(&){1,2}|\|?\||\?|\*|\//g,
 	'ignore': /&(lt|gt|amp);/gi,
 	'punctuation': /[{}[\];(),.:]/g
 };
-if (Prism.languages.html) {
-	Prism.languages.insertBefore('html', 'tag', {
-		'script': {
-			pattern: /(&lt;|<)script[\w\W]*?(>|&gt;)[\w\W]*?(&lt;|<)\/script(>|&gt;)/ig,
-			inside: {
-				'tag': {
-					pattern: /(&lt;|<)script[\w\W]*?(>|&gt;)|(&lt;|<)\/script(>|&gt;)/ig,
-					inside: Prism.languages.html.tag.inside
-				},
-				rest: Prism.languages.javascript
-			}
-		}
-	});
-}
+
 Prism.languages.java = {
 	/* Warna Abu-Abu */
 	'comment': {
@@ -323,28 +357,63 @@ Prism.languages.java = {
 		lookbehind: true
 	},
 
-	/* Warna Hijau Muda*/
+
 	'string': /("|')(\\?.)*?\1/g,
 	/* Warna Merah Italic */
-	'keyword': /\b(abstract|continue|for|new|switch|assert|default|goto|package|synchronized|boolean|do|if|private|this|break|double|implements|protected|throw|byte|else|import|public|throws|case|enum|instanceof|return|transient|catch|extends|int|bool|short|try|char|final|interface|static|void|class|finally|long|strictfp|volatile|const|float|native|super|while|Destroy)\b/g,
+	'keyword': /\b(public|import|virtual|abstract|continue|for|new|switch|assert|default|goto|get|set|package|synchronized|boolean|do|if|foreach|private|this|break|double|implements|protected|throw|byte|else|throws|case|enum|instanceof|return|transient|catch|extends|int|bool|short|try|char|final|interface|static|void|class|finally|long|strictfp|volatile|const|float|native|super|while|Destroy|value)\b/g,
 	/* Warna Kuning */
 	'boolean': /\b(true|false)\b/g,
 	/* Warna Hijau Tua */
-	'general': /\b(A|Alpha0|Alpha1|Alpha2|Alpha3|Alpha4|Alpha5|Alpha6|Alpha7|Alpha8|Alpha9|DownArrow|LeftArrow|UpArrow|RightArrow|RightAlt|LeftAlt|B|Backquote|Backspace|Break|LeftBracket|RightBracket|JoystickButton0|JoystickButton1|JoystickButton2|JoystickButton3|JoystickButton4|JoystickButton5|JoystickButton6|JoystickButton8|JoystickButton9|JoystickButton10|JoystickButton11|JoystickButton12|JoystickButton13|JoystickButton14|JoystickButton15|JoystickButton16|JoystickButton17|JoystickButton18|JoystickButton19|Joystick1Button0|Joystick1Button1|Joystick1Button2|Joystick1Button3|Joystick1Button4|Joystick1Button5|Joystick1Button6|Joystick1Button8|Joystick1Button9|Joystick1Button10|Joystick1Button11|Joystick1Button12|Joystick1Button13|Joystick1Button14|Joystick1Button15|Joystick1Button16|Joystick1Button17|Joystick1Button18|Joystick1Button19|Joystick2Button0|Joystick2Button1|Joystick2Button2|Joystick2Button3|Joystick2Button4|Joystick2Button5|Joystick2Button6|Joystick2Button8|Joystick2Button9|Joystick2Button10|Joystick2Button11|Joystick2Button12|Joystick2Button13|Joystick2Button14|Joystick2Button15|Joystick2Button16|Joystick2Button17|Joystick2Button18|Joystick2Button19|Joystick4Button0|Joystick4Button1|Joystick4Button2|Joystick4Button3|Joystick4Button4|Joystick4Button5|Joystick4Button6|Joystick4Button8|Joystick4Button9|Joystick4Button10|Joystick4Button11|Joystick4Button12|Joystick4Button13|Joystick4Button14|Joystick4Button15|Joystick4Button16|Joystick4Button17|Joystick4Button18|Joystick4Button19|Joystick5Button0|Joystick5Button1|Joystick5Button2|Joystick5Button3|Joystick5Button4|Joystick5Button5|Joystick5Button6|Joystick5Button8|Joystick5Button9|Joystick5Button10|Joystick5Button11|Joystick5Button12|Joystick5Button13|Joystick5Button14|Joystick5Button15|Joystick5Button16|Joystick5Button17|Joystick5Button18|Joystick5Button19|Joystick6Button0|Joystick6Button1|Joystick6Button2|Joystick6Button3|Joystick6Button4|Joystick6Button5|Joystick6Button6|Joystick6Button8|Joystick6Button9|Joystick6Button10|Joystick6Button11|Joystick6Button12|Joystick6Button13|Joystick6Button14|Joystick6Button15|Joystick6Button16|Joystick6Button17|Joystick6Button18|Joystick6Button19|Joystick7Button0|Joystick7Button1|Joystick7Button2|Joystick7Button3|Joystick7Button4|Joystick7Button5|Joystick7Button6|Joystick7Button8|Joystick7Button9|Joystick7Button10|Joystick7Button11|Joystick7Button12|Joystick7Button13|Joystick7Button14|Joystick7Button15|Joystick7Button16|Joystick7Button17|Joystick7Button18|Joystick7Button19|Joystick8Button0|Joystick8Button1|Joystick8Button2|Joystick8Button3|Joystick8Button4|Joystick8Button5|Joystick8Button6|Joystick8Button8|Joystick8Button9|Joystick8Button10|Joystick8Button11|Joystick8Button12|Joystick8Button13|Joystick8Button14|Joystick8Button15|Joystick8Button16|Joystick8Button17|Joystick8Button18|Joystick8Button19|C|CapsLock|clip|Comma|Clear|LeftCommand|LeftControl|RightCommand|RightControl|Delete|D|PageDown|E|End|F|F1|F2|F3|F4|F5|F6|F10|F11|F12|F13|F14|F15|G|Greater|H|Hash|Home|I|Insert|J|K|Keypad0|Keypad1|Keypad2|Keypad3|Keypad4|Keypad5|Keypad6|Keypad7|Keypad8|KeypadEnter|KeypadEquals|KeypadMinus|KeypadPlus|KeypadDivide|KeypadPeriod|L|LeftWindows|RightWindows|LeftShift|ScrollLock|M|Menu|Mouse0|Mouse1|Mouse2|Mouse3|Mouse4|Mouse5|Mouse6|N|None|Numlock|O|P|PageDown|PageUp|Pause|Print|position|DoubleQuote|Qoute|Question|Return|RightParen|LeftParen|RightShift|Q|R|S|T|text|Tab|timeScale|U|Underscore|V|velocity|W|X|Y|Z|Space|Escape|transform|tag|deltaTime|right|left|up|down|localScale)\b/g,
+	'general': /\b(alpha|zero|Infinity|Rad2Deg|A|Alpha0|Alpha1|Alpha2|Alpha3|Alpha4|Alpha5|Alpha6|Alpha7|Alpha8|Alpha9|collider|DownArrow|forward|LeftArrow|UpArrow|RightArrow|RightAlt|LeftAlt|B|Backquote|Backspace|Break|LeftBracket|RightBracket|JoystickButton0|JoystickButton1|JoystickButton2|JoystickButton3|JoystickButton4|JoystickButton5|JoystickButton6|JoystickButton8|JoystickButton9|JoystickButton10|JoystickButton11|JoystickButton12|JoystickButton13|JoystickButton14|JoystickButton15|JoystickButton16|JoystickButton17|JoystickButton18|JoystickButton19|Joystick1Button0|Joystick1Button1|Joystick1Button2|Joystick1Button3|Joystick1Button4|Joystick1Button5|Joystick1Button6|Joystick1Button8|Joystick1Button9|Joystick1Button10|Joystick1Button11|Joystick1Button12|Joystick1Button13|Joystick1Button14|Joystick1Button15|Joystick1Button16|Joystick1Button17|Joystick1Button18|Joystick1Button19|Joystick2Button0|Joystick2Button1|Joystick2Button2|Joystick2Button3|Joystick2Button4|Joystick2Button5|Joystick2Button6|Joystick2Button8|Joystick2Button9|Joystick2Button10|Joystick2Button11|Joystick2Button12|Joystick2Button13|Joystick2Button14|Joystick2Button15|Joystick2Button16|Joystick2Button17|Joystick2Button18|Joystick2Button19|Joystick4Button0|Joystick4Button1|Joystick4Button2|Joystick4Button3|Joystick4Button4|Joystick4Button5|Joystick4Button6|Joystick4Button8|Joystick4Button9|Joystick4Button10|Joystick4Button11|Joystick4Button12|Joystick4Button13|Joystick4Button14|Joystick4Button15|Joystick4Button16|Joystick4Button17|Joystick4Button18|Joystick4Button19|Joystick5Button0|Joystick5Button1|Joystick5Button2|Joystick5Button3|Joystick5Button4|Joystick5Button5|Joystick5Button6|Joystick5Button8|Joystick5Button9|Joystick5Button10|Joystick5Button11|Joystick5Button12|Joystick5Button13|Joystick5Button14|Joystick5Button15|Joystick5Button16|Joystick5Button17|Joystick5Button18|Joystick5Button19|Joystick6Button0|Joystick6Button1|Joystick6Button2|Joystick6Button3|Joystick6Button4|Joystick6Button5|Joystick6Button6|Joystick6Button8|Joystick6Button9|Joystick6Button10|Joystick6Button11|Joystick6Button12|Joystick6Button13|Joystick6Button14|Joystick6Button15|Joystick6Button16|Joystick6Button17|Joystick6Button18|Joystick6Button19|Joystick7Button0|Joystick7Button1|Joystick7Button2|Joystick7Button3|Joystick7Button4|Joystick7Button5|Joystick7Button6|Joystick7Button8|Joystick7Button9|Joystick7Button10|Joystick7Button11|Joystick7Button12|Joystick7Button13|Joystick7Button14|Joystick7Button15|Joystick7Button16|Joystick7Button17|Joystick7Button18|Joystick7Button19|Joystick8Button0|Joystick8Button1|Joystick8Button2|Joystick8Button3|Joystick8Button4|Joystick8Button5|Joystick8Button6|Joystick8Button8|Joystick8Button9|Joystick8Button10|Joystick8Button11|Joystick8Button12|Joystick8Button13|Joystick8Button14|Joystick8Button15|Joystick8Button16|Joystick8Button17|Joystick8Button18|Joystick8Button19|C|CapsLock|clip|Comma|Clear|LeftCommand|LeftControl|RightCommand|RightControl|rotation|Delete|D|PageDown|E|End|F|F1|F2|F3|F4|F5|F6|F10|F11|F12|F13|F14|F15|G|Greater|H|Hash|Home|I|Insert|J|K|Keypad0|Keypad1|Keypad2|Keypad3|Keypad4|Keypad5|Keypad6|Keypad7|Keypad8|KeypadEnter|KeypadEquals|KeypadMinus|KeypadPlus|KeypadDivide|KeypadPeriod|L|LeftWindows|RightWindows|LeftShift|ScrollLock|M|main|mousePosition|Menu|Mouse0|Mouse1|Mouse2|Mouse3|Mouse4|Mouse5|Mouse6|N|None|Numlock|O|P|PageDown|PageUp|Pause|Print|position|DoubleQuote|Qoute|Question|Return|RightParen|LeftParen|RightShift|Q|R|S|T|text|Tab|timeScale|U|Underscore|V|velocity|W|X|x|Y|y|Z|z|Space|Escape|transform|tag|deltaTime|right|left|up|down|localScale)\b/g,
 	/* Warna Coklat */
-	'connector': /\b(AddForce|GetKey|Translate|SetBool|SetActive|ToString|GetComponent|OnTriggerEnter2D|OnTriggerStay2D|OnTriggerExit2D|Start|Update|Find|OverlapCircle|OverlapBox|OverlapBoxAll|OverlapCapsule|OverlapCapsuleAll|OverlapCollider|PlayOneShot|Play)\b/g,
+	'brown': /\b(LoadLevel|IsPointerOverGameObject|StartCoroutine|Distance|MoveTowards|Instantiate|GetMouseButtonDown|GetMouseButtonUp|ScreenToWorldPoint|Euler|Abs|Atan2|AddForce|Clamp|Find|FindObjectOfType|FindObjectsOfType|FindGameObjectWithTag|FindGameObjectsWithTag|FindWithTag|GetKey|GetFloat|GetInt|GetString|Lerp|LookAt|Translate|SetBool|SetActive|SetFloat|SetInt|SetString|ToString|GetComponent|OnTriggerEnter2D|OnTriggerStay2D|OnTriggerExit2D|Start|Update|Find|OverlapCircle|OverlapBox|OverlapBoxAll|OverlapCapsule|OverlapCapsuleAll|OverlapCollider|PlayOneShot|Play|SetActive|Quit|Raycast|Rotate)\b/g,
+	/* Warna Hijau Muda */
+	'green-young': /\b(gameObject)\b/g,
+	/* Warna Ungu */
+	'purple': /\b(null|base)\b/g,
 	/* Warna Hijau Lime */
 	'android': /\b(android)\b/g,
 	/* Warna Merah Biasa */
-	'androperty': /\b(import|using)\b/g,
+	'red': /\b(import|using)\b/g,
 	/* Warna Aqua */
-	'line': /\b(Override|Text|Animator|Rigidbody2D|GameObject|AudioSource|MonoBehaviour|Transform|LayerMask|Vector2|Vector3|Vector4|Slider|Collider2D|KeyCode|Time|Input|Physics|Physics2D|PhysicMaterial|PhysicsMaterial2D)\b/g,
+	'aqua': /\b(Application|Override|Camera|CompareTag|EventSystem|Image|Invoke|Text|Animator|Rigidbody2D|RaycastHit2D|GameObject|AudioSource|MonoBehaviour|Mathf|Transform|LayerMask|Vector2|Vector3|Vector4|Slider|Collider2D|KeyCode|Time|Input|Physics|Physics2D|PhysicMaterial|PhysicsMaterial2D|PlayerPrefs|RectTransform)\b/g,
 	/* Warna Kuning */
 	'number': /\b0b[01]+\b|\b0x[\da-f]*\.?[\da-fp\-]+\b|\b\d*\.?\d+[e]?[\d]*[df]\b|\W\d*\.?\d+\b/gi,
 	/* Warna Biru */
-	'operator': /([-+]{1,2}|!|=?&lt;|=?&gt;|={1,2}|(&amp;){1,2}|\|?\||\?|\*|\/|%|\^|(&lt;){2}|($gt;){2,3}~)/g,
+	'operator': /([-+]{1,2}|!|=?<|=?>|={1,2}|(&){1,2}|\|?\||\?|\*|\/|%|\^|(<){2}|($gt;){2,3}~)/g,
 	/* Warna Biru */
 	'ignore': /&(lt|gt|amp);/gi,
 	/* Warna Putih */
 	'punctuation': /[{}[\];(),.:]/g,
 };
+
+
+
+if (Prism.languages.html) {
+	Prism.languages.insertBefore('html', 'tag', {
+		'style': {
+			pattern: /(<|<)style[\w\W]*?(>|>)[\w\W]*?(<|<)\/style(>|>)/ig,
+			inside: {
+				'tag': {
+					pattern: /(<|<)style[\w\W]*?(>|>)|(<|<)\/style(>|>)/ig,
+					inside: Prism.languages.html.tag.inside
+				},
+				rest: Prism.languages.css
+			}
+		}
+	});
+}
+if (Prism.languages.html) {
+	Prism.languages.insertBefore('html', 'tag', {
+		'script': {
+			pattern: /(<|<)script[\w\W]*?(>|>)[\w\W]*?(<|<)\/script(>|>)/ig,
+			inside: {
+				'tag': {
+					pattern: /(<|<)script[\w\W]*?(>|>)|(<|<)\/script(>|>)/ig,
+					inside: Prism.languages.html.tag.inside
+				},
+				rest: Prism.languages.javascript
+			}
+		}
+	});
+}
